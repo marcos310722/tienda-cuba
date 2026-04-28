@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Variables Claro (Default) */
+  :root {
+    --bg-body: 249 250 251;
+    --text-body: 17 24 39;
+    --bg-card: 255 255 255;
+    --border-card: 229 231 235;
+    --bg-input: 255 255 255;
+    --border-input: 209 213 219;
+    --text-input: 17 24 39;
+    --btn-sec-bg: 229 231 235;
+    --btn-sec-text: 31 41 55;
+  }
+
+  /* Variables Oscuro (Automático) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-body: 15 23 42;
+      --text-body: 241 245 249;
+      --bg-card: 30 41 59;
+      --border-card: 51 65 85;
+      --bg-input: 30 41 59;
+      --border-input: 71 85 105;
+      --text-input: 241 245 249;
+      --btn-sec-bg: 51 65 85;
+      --btn-sec-text: 226 232 240;
+    }
+  }
+
+  body {
+    @apply antialiased transition-colors duration-300;
+    background-color: rgb(var(--bg-body));
+    color: rgb(var(--text-body));
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply bg-cuba-500 text-white hover:bg-cuba-600 focus:ring-cuba-500;
+  }
+  .btn-secondary {
+    @apply transition-colors duration-200;
+    background-color: rgb(var(--btn-sec-bg));
+    color: rgb(var(--btn-sec-text));
+  }
+  .btn-secondary:hover { filter: brightness(0.9); }
+  
+  .input {
+    @apply w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-cuba-500 focus:border-transparent transition;
+    background-color: rgb(var(--bg-input));
+    border: 1px solid rgb(var(--border-input));
+    color: rgb(var(--text-input));
+  }
+  .input::placeholder { color: rgb(var(--text-input)); opacity: 0.5; }
+
+  .card {
+    @apply rounded-xl shadow-sm p-4 transition-colors duration-300;
+    background-color: rgb(var(--bg-card));
+    border: 1px solid rgb(var(--border-card));
+  }
+
+  table thead {
+    @apply border-b;
+    background-color: rgb(var(--bg-card));
+    border-color: rgb(var(--border-card));
+  }
+  table tbody tr { border-bottom: 1px solid rgb(var(--border-card)); }
+  table tbody tr:hover { background-color: rgb(var(--bg-body)); }
+}
+
+@layer utilities{
+  @keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-bounce-slow {
+  animation: bounce-slow 3s infinite ease-in-out;
+}
+}

@@ -25,17 +25,19 @@ export default function Home() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Tienda Virtual Cuba</h1>
-        <p className="mt-2 text-gray-600 max-w-2xl mx-auto">Productos seleccionados. Pago fácil por Transfermóvil, EnZona o efectivo.</p>
+        {/* Texto adaptado a modo oscuro */}
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Tienda Virtual Cuba</h1>
+        <p className="mt-2 text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">Productos seleccionados. Pago fácil por Transfermóvil, EnZona o efectivo.</p>
       </div>
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-cuba-500" /></div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
           {products.map(p => <ProductCard key={p.id} product={p} />)}
-        <WhatsAppButton />
+          {/* El botón flotante debe estar fuera del grid o posicionado fixed, aquí lo dejo al final del contenedor principal */}
         </div>
       )}
+      <WhatsAppButton />
     </div>
   );
 }

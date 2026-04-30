@@ -14,6 +14,8 @@
     --text-input: 17 24 39;
     --btn-sec-bg: 229 231 235;
     --btn-sec-text: 31 41 55;
+    --text-muted: 107 114 128; /* gray-500 */
+    --text-price: 17 24 39;    /* gray-900 */
   }
 
   /* Variables Oscuro (Automático) */
@@ -28,6 +30,8 @@
       --text-input: 241 245 249;
       --btn-sec-bg: 51 65 85;
       --btn-sec-text: 226 232 240;
+      --text-muted: 148 163 184;   /* slate-400 */
+      --text-price: 241 245 249;   /* slate-100 */
     }
   }
 
@@ -58,7 +62,10 @@
     border: 1px solid rgb(var(--border-input));
     color: rgb(var(--text-input));
   }
-  .input::placeholder { color: rgb(var(--text-input)); opacity: 0.5; }
+  .input::placeholder { 
+    color: rgb(var(--text-input)); 
+    opacity: 0.5; 
+  }
 
   .card {
     @apply rounded-xl shadow-sm p-4 transition-colors duration-300;
@@ -71,16 +78,29 @@
     background-color: rgb(var(--bg-card));
     border-color: rgb(var(--border-card));
   }
-  table tbody tr { border-bottom: 1px solid rgb(var(--border-card)); }
-  table tbody tr:hover { background-color: rgb(var(--bg-body)); }
+  table tbody tr { 
+    border-bottom: 1px solid rgb(var(--border-card)); 
+  }
+  table tbody tr:hover { 
+    background-color: rgb(var(--bg-body)); 
+  }
+
+  /* Clases utilitarias para textos específicos */
+  .text-muted {
+    color: rgb(var(--text-muted));
+  }
+  .text-price {
+    color: rgb(var(--text-price));
+    @apply font-bold;
+  }
 }
 
-@layer utilities{
+@layer utilities {
   @keyframes bounce-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-.animate-bounce-slow {
-  animation: bounce-slow 3s infinite ease-in-out;
-}
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .animate-bounce-slow {
+    animation: bounce-slow 3s infinite ease-in-out;
+  }
 }

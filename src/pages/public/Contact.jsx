@@ -17,14 +17,8 @@ export default function Contact() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        
         {/* WhatsApp Card */}
-        <a
-          href="https://wa.me/5355553302"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card group hover:border-green-300 dark:hover:border-green-800 transition-colors flex flex-col items-center text-center p-6"
-        >
+        <a href="https://wa.me/5355553302" target="_blank" rel="noopener noreferrer" className="card group hover:border-green-300 dark:hover:border-green-800 transition-colors flex flex-col items-center text-center p-6">
           <div className="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform">
             <MessageCircle className="w-7 h-7" />
           </div>
@@ -36,12 +30,7 @@ export default function Contact() {
         </a>
 
         {/* Telegram Card */}
-        <a
-          href="https://t.me/5355553302"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card group hover:border-blue-300 dark:hover:border-blue-800 transition-colors flex flex-col items-center text-center p-6"
-        >
+        <a href="https://t.me/5355553302" target="_blank" rel="noopener noreferrer" className="card group hover:border-blue-300 dark:hover:border-blue-800 transition-colors flex flex-col items-center text-center p-6">
           <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
             <Send className="w-7 h-7" />
           </div>
@@ -53,12 +42,7 @@ export default function Contact() {
         </a>
 
         {/* Messenger Card */}
-        <a
-          href="https://m.me/marcos.despaigne"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card group hover:border-purple-300 dark:hover:border-purple-800 transition-colors flex flex-col items-center text-center p-6"
-        >
+        <a href="https://m.me/marcos.despaigne" target="_blank" rel="noopener noreferrer" className="card group hover:border-purple-300 dark:hover:border-purple-800 transition-colors flex flex-col items-center text-center p-6">
           <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-4 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
             <MessageSquareMore className="w-7 h-7" />
           </div>
@@ -68,7 +52,6 @@ export default function Contact() {
             Deseo comunicarme con Marcos Despaigne el desarrolador de la página
           </span>
         </a>
-
       </div>
 
       <div className="text-center">

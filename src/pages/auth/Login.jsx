@@ -50,13 +50,13 @@ export default function Login() {
         </form>
         
         <div className="mt-4 text-center">
-          <Link to="/recuperar-contrasena" className="text-sm text-cuba-600 dark:text-cuba-400 hover:underline font-medium">
+          <Link to="/recuperar-contrasena" className="text-sm text-cuba-600 dark:text-white hover:underline font-medium">
             ¿Olvidaste tu contraseña?
           </Link>
         </div>
 
         <p className="mt-4 text-center text-sm text-gray-600 dark:text-slate-400">
-          ¿No tienes cuenta? <Link to="/registro" className="text-cuba-600 dark:text-cuba-400 hover:underline font-medium">Regístrate aquí</Link>
+          ¿No tienes cuenta? <Link to="/registro" className="text-cuba-600 dark:text-white hover:underline font-medium">Regístrate aquí</Link>
         </p>
       </div>
     </div>

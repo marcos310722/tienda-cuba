@@ -14,14 +14,14 @@ export default function AdminProducts() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, reset, setValue, watch } = useForm({
-    defaultValues: { 
-      name: '', 
-      description: '', 
-      price_cup: 0, 
-      stock: 0, 
-      category_id: '', 
-      image_url: '', 
-      active: true 
+    defaultValues: {
+      name: '',
+      description: '',
+      price_cup: 0,
+      stock: 0,
+      category_id: '',
+      image_url: '',
+      active: true
     }
   });
 
@@ -55,44 +55,25 @@ export default function AdminProducts() {
     setShowForm(true);
   };
 
-const onSubmit = async (data) => {
-  setIsSubmitting(true);
-  try {
-    console.log('🔍 Iniciando upload...', imageFile);
-    
-    let imageUrl = data.image_url;
-    if (imageFile) {
-      console.log('📤 Subiendo archivo:', imageFile.name, imageFile.type, imageFile.size);
-      
-      const fileExt = imageFile.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
-      console.log('📁 Nombre archivo:', fileName);
-      
-      const { data: uploadData, error: uploadError } = await supabase
-        .storage
-        .from('product-images')
-        .upload(fileName, imageFile, {
-          cacheControl: '3600',
-          upsert: false
-        });
-      
-      console.log('✅ Upload response:', uploadData);
-      console.log('❌ Upload error:', uploadError);
-      
-      if (uploadError) {
-        throw new Error(`Storage error: ${uploadError.message}`);
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    try {
+      let imageUrl = data.image_url;
+      if (imageFile) {
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase
+          .storage
+          .from('product-images')
+          .upload(fileName, imageFile, { cacheControl: '3600', upsert: false });
+        
+        if (uploadError) throw new Error(`Storage error: ${uploadError.message}`);
+        
+        const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
+        imageUrl = publicUrl;
       }
-      
-      const { data: { publicUrl } } = supabase
-        .storage
-        .from('product-images')
-        .getPublicUrl(fileName);
-      
-      console.log('🔗 Public URL:', publicUrl);
-      imageUrl = publicUrl;
-    }
-    
-      
+
       const payload = {
         name: data.name.trim(),
         description: data.description?.trim() || '',
@@ -104,24 +85,14 @@ const onSubmit = async (data) => {
       };
 
       if (editingId) {
-        const { error } = await supabase
-          .from('products')
-          .update(payload)
-          .eq('id', editingId);
+        const { error } = await supabase.from('products').update(payload).eq('id', editingId);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from('products')
-          .insert(payload);
+        const { error } = await supabase.from('products').insert(payload);
         if (error) throw error;
       }
 
-      // Recargar lista actualizada
-      const { data: updated } = await supabase
-        .from('products')
-        .select('*, categories(name)')
-        .order('created_at', { ascending: false });
-      
+      const { data: updated } = await supabase.from('products').select('*, categories(name)').order('created_at', { ascending: false });
       setProducts(updated || []);
       setShowForm(false);
       setEditingId(null);
@@ -136,12 +107,7 @@ const onSubmit = async (data) => {
 
   const deleteProduct = async (id) => {
     if (!window.confirm('¿Eliminar este producto permanentemente?')) return;
-    
-    const { error } = await supabase
-      .from('products')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabase.from('products').delete().eq('id', id);
     if (!error) {
       setProducts(prev => prev.filter(p => p.id !== id));
     } else {
@@ -150,28 +116,21 @@ const onSubmit = async (data) => {
   };
 
   if (loading) {
-    return (
-      <div className="p-8 flex justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-cuba-500" />
-      </div>
-    );
+    return <div className="p-8 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-cuba-500" /></div>;
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Gestión de Productos</h1>
-        <button 
-          onClick={() => openForm()} 
-          className="btn btn-primary flex items-center gap-2"
-        >
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Gestión de Productos</h1>
+        <button onClick={() => openForm()} className="btn btn-primary flex items-center gap-2">
           <Plus className="w-4 h-4" /> Nuevo Producto
         </button>
       </div>
 
       {showForm && (
-        <div className="card mb-6 bg-blue-50 border-blue-200">
-          <h3 className="font-semibold mb-4">
+        <div className="card mb-6 bg-blue-50 dark:bg-slate-700/50 border-blue-200 dark:border-slate-600">
+          <h3 className="font-semibold mb-4 text-gray-900 dark:text-white">
             {editingId ? 'Editar Producto' : 'Agregar Producto'}
           </h3>
           <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -182,63 +141,32 @@ const onSubmit = async (data) => {
             
             <select {...register('category_id')} className="input">
               <option value="">Sin categoría</option>
-              {categories.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
+              {categories.map(c => (<option key={c.id} value={c.id}>{c.name}</option>))}
             </select>
             
             <div className="flex items-center gap-2">
               <label className="flex-1 btn btn-secondary cursor-pointer flex items-center justify-center gap-2">
                 <Upload className="w-4 h-4" /> 
                 {imageFile ? imageFile.name : 'Subir Imagen'}
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  onChange={e => setImageFile(e.target.files?.[0] || null)} 
-                />
+                <input type="file" accept="image/*" className="hidden" onChange={e => setImageFile(e.target.files?.[0] || null)} />
               </label>
               {watch('image_url') && (
-                <span className="text-xs text-gray-500 truncate max-w-[120px]">
+                <span className="text-xs text-gray-500 dark:text-slate-400 truncate max-w-[120px]">
                   URL: {watch('image_url')}
                 </span>
               )}
             </div>
             
             <div className="flex items-center gap-2 md:col-span-2">
-              <input 
-                type="checkbox" 
-                id="active" 
-                {...register('active')} 
-                className="w-4 h-4 rounded border-gray-300 text-cuba-600 focus:ring-cuba-500" 
-              />
-              <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                Producto activo
-              </label>
+              <input type="checkbox" id="active" {...register('active')} className="w-4 h-4 rounded border-gray-300 text-cuba-600 focus:ring-cuba-500" />
+              <label htmlFor="active" className="text-sm font-medium text-gray-700 dark:text-slate-300">Producto activo</label>
             </div>
             
             <div className="flex gap-2 md:col-span-2">
-              <button 
-                type="submit" 
-                disabled={isSubmitting} 
-                className="btn btn-primary flex items-center gap-2"
-              >
-                {isSubmitting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <><Save className="w-4 h-4" /> Guardar</>
-                )}
+              <button type="submit" disabled={isSubmitting} className="btn btn-primary flex items-center gap-2">
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Guardar</>}
               </button>
-              <button 
-                type="button" 
-                onClick={() => { 
-                  setShowForm(false); 
-                  setEditingId(null); 
-                  reset(); 
-                  setImageFile(null); 
-                }} 
-                className="btn btn-secondary flex items-center gap-2"
-              >
+              <button type="button" onClick={() => { setShowForm(false); setEditingId(null); reset(); setImageFile(null); }} className="btn btn-secondary flex items-center gap-2">
                 <X className="w-4 h-4" /> Cancelar
               </button>
             </div>
@@ -248,56 +176,45 @@ const onSubmit = async (data) => {
 
       <div className="card overflow-x-auto">
         <table className="w-full text-left text-sm min-w-[800px]">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-gray-50 dark:bg-slate-700 border-b dark:border-slate-600">
             <tr>
-              <th className="p-3">Imagen</th>
-              <th className="p-3">Nombre</th>
-              <th className="p-3">Categoría</th>
-              <th className="p-3">Precio</th>
-              <th className="p-3">Stock</th>
-              <th className="p-3">Estado</th>
-              <th className="p-3">Acciones</th>
+              <th className="p-3 text-gray-700 dark:text-slate-200">Imagen</th>
+              <th className="p-3 text-gray-700 dark:text-slate-200">Nombre</th>
+              <th className="p-3 text-gray-700 dark:text-slate-200">Categoría</th>
+              <th className="p-3 text-gray-700 dark:text-slate-200">Precio</th>
+              <th className="p-3 text-gray-700 dark:text-slate-200">Stock</th>
+              <th className="p-3 text-gray-700 dark:text-slate-200">Estado</th>
+              <th className="p-3 text-gray-700 dark:text-slate-200">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {products.map(p => (
-              <tr key={p.id} className="border-b hover:bg-gray-50">
+              <tr key={p.id} className="border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
                 <td className="p-3">
                   {p.image_url ? (
-                    <img 
-                      src={p.image_url} 
-                      alt={p.name} 
-                      className="w-12 h-12 object-cover rounded-md border" 
-                      loading="lazy" 
-                    />
+                    <img src={p.image_url} alt={p.name} className="w-12 h-12 object-cover rounded-md border dark:border-slate-600 bg-gray-100 dark:bg-slate-800" loading="lazy" />
                   ) : (
-                    <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center border">
-                      <ImageOff className="w-6 h-6 text-gray-400" />
+                    <div className="w-12 h-12 bg-gray-100 dark:bg-slate-800 rounded-md flex items-center justify-center border dark:border-slate-600">
+                      <ImageOff className="w-6 h-6 text-gray-400 dark:text-slate-500" />
                     </div>
                   )}
                 </td>
-                <td className="p-3 font-medium">{p.name}</td>
-                <td className="p-3">{p.categories?.name || '-'}</td>
-                <td className="p-3">{formatCUP(p.price_cup)}</td>
-                <td className="p-3">{p.stock}</td>
+                <td className="p-3 font-medium text-gray-900 dark:text-white">{p.name}</td>
+                <td className="p-3 text-gray-600 dark:text-slate-300">{p.categories?.name || '-'}</td>
+                <td className="p-3 text-gray-900 dark:text-white font-medium">{formatCUP(p.price_cup)}</td>
+                <td className="p-3 text-gray-600 dark:text-slate-300">{p.stock}</td>
                 <td className="p-3">
                   {p.active ? (
-                    <span className="text-green-600 font-medium bg-green-50 px-2 py-0.5 rounded-full">Activo</span>
+                    <span className="text-green-600 dark:text-green-400 font-medium bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-full border border-green-200 dark:border-green-800">Activo</span>
                   ) : (
-                    <span className="text-red-600 font-medium bg-red-50 px-2 py-0.5 rounded-full">Inactivo</span>
+                    <span className="text-red-600 dark:text-red-400 font-medium bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded-full border border-red-200 dark:border-red-800">Inactivo</span>
                   )}
                 </td>
                 <td className="p-3 space-x-2">
-                  <button 
-                    onClick={() => openForm(p)} 
-                    className="text-blue-600 hover:text-blue-800 p-1 hover:bg-blue-50 rounded"
-                  >
+                  <button onClick={() => openForm(p)} className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded">
                     <Edit2 className="w-4 h-4" />
                   </button>
-                  <button 
-                    onClick={() => deleteProduct(p.id)} 
-                    className="text-red-600 hover:text-red-800 p-1 hover:bg-red-50 rounded"
-                  >
+                  <button onClick={() => deleteProduct(p.id)} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </td>
@@ -305,9 +222,7 @@ const onSubmit = async (data) => {
             ))}
             {products.length === 0 && (
               <tr>
-                <td colSpan="7" className="p-8 text-center text-gray-500">
-                  No hay productos registrados.
-                </td>
+                <td colSpan="7" className="p-8 text-center text-gray-500 dark:text-slate-400">No hay productos registrados.</td>
               </tr>
             )}
           </tbody>

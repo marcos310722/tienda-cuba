@@ -7,19 +7,27 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Faltan variables de entorno de Supabase');
 }
 
-const retryFetch = async (fn, retries = 2, delay = 1000) => {
-  for (let i = 0; i <= retries; i++) {
-    try { return await fn(); }
-    catch (err) {
-      if (i === retries) throw err;
-      await new Promise(r => setTimeout(r, delay * (i + 1)));
-    }
+// Singleton pattern - una sola instancia del cliente
+let supabaseInstance = null;
+
+export const getSupabaseClient = () => {
+  if (!supabaseInstance) {
+    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: { 
+        autoRefreshToken: true, 
+        persistSession: true, 
+        detectSessionInUrl: false,
+        flowType: 'pkce'
+      },
+      global: {
+        headers: { 'X-Client-Info': 'tienda-cuba/1.0.0' }
+      },
+      db: {
+        schema: 'public'
+      }
+    });
   }
+  return supabaseInstance;
 };
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: false },
-  global: {
-    fetch: (...args) => retryFetch(() => fetch(...args))
-  }
-});
+export const supabase = getSupabaseClient();

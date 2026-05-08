@@ -1,15 +1,16 @@
+import { memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../store/cartStore';
 import { ShoppingCart, LogOut, User, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
-export default function Header() {
+const Header = memo(function Header() {
   const { user, isAdmin, logout } = useAuth();
   const { count } = useCart();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  
   const handleLogout = async () => {
     try {
       await logout();
@@ -19,7 +20,6 @@ export default function Header() {
     }
   };
 
-  // Lógica para obtener el nombre o el email
   const displayName = user?.user_metadata?.full_name || user?.email || 'Usuario';
 
   return (
@@ -52,7 +52,6 @@ export default function Header() {
             
             {user && (
               <div className="flex items-center space-x-3">
-                {/* AQUÍ ESTÁ EL CAMBIO: Muestra el nombre si existe, sino el email */}
                 <span className="text-sm text-gray-500 dark:text-slate-400 font-medium max-w-[150px] truncate" title={displayName}>
                   {displayName}
                 </span>
@@ -74,6 +73,7 @@ export default function Header() {
           <button
             className="md:hidden p-2 rounded-md text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -99,7 +99,6 @@ export default function Header() {
             {user && (
               <div className="flex items-center space-x-2 py-2 border-t border-gray-100 dark:border-slate-700 mt-2">
                 <User className="w-5 h-5 text-gray-500 dark:text-slate-400" />
-                {/* AQUÍ TAMBIÉN SE MUESTRA EL NOMBRE */}
                 <span className="text-sm text-gray-700 dark:text-slate-200 font-medium truncate">{displayName}</span>
               </div>
             )}
@@ -119,4 +118,6 @@ export default function Header() {
       </div>
     </header>
   );
-}
+});
+
+export default Header;

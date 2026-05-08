@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export const useCart = create(
   persist(
@@ -38,10 +38,14 @@ export const useCart = create(
     }),
     { 
       name: 'tienda-cuba-cart',
-      // Migración para limpiar carritos antiguos
-      migrate: (persistedState, version) => {
-        // En futuras versiones puedes migrar datos
-        return persistedState;
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ items: state.items }),
+      onRehydrateStorage: () => {
+        return (state, error) => {
+          if (error) {
+            console.error('Error rehydrating cart:', error);
+          }
+        };
       }
     }
   )

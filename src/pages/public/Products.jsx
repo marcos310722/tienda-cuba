@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
 import ProductCard from '../../components/product/ProductCard';
 import { Loader2 } from 'lucide-react';
@@ -23,12 +23,14 @@ export default function Products() {
     fetchData();
   }, []);
 
-  const filtered = products.filter(p => {
-    const matchCat = selectedCat === 'all' || p.category_id === selectedCat;
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || 
-                       (p.description || '').toLowerCase().includes(search.toLowerCase());
-    return matchCat && matchSearch;
-  });
+  const filtered = useMemo(() => {
+    return products.filter(p => {
+      const matchCat = selectedCat === 'all' || p.category_id === selectedCat;
+      const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || 
+                         (p.description || '').toLowerCase().includes(search.toLowerCase());
+      return matchCat && matchSearch;
+    });
+  }, [products, selectedCat, search]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

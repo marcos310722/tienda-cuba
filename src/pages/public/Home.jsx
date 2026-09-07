@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
 import ProductCard from '../../components/product/ProductCard';
 import SkeletonCard from '../../components/ui/SkeletonCard';
@@ -27,6 +27,10 @@ export default function Home() {
     fetchFeatured();
   }, []);
 
+  const productCards = useMemo(() => {
+    return products.map(p => <ProductCard key={p.id} product={p} />);
+  }, [products]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
       <div className="text-center mb-10">
@@ -48,7 +52,7 @@ export default function Home() {
             <SkeletonCard />
           </>
         ) : (
-          products.map(p => <ProductCard key={p.id} product={p} />)
+          productCards
         )}
       </div>
 
